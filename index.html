@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>阿笑的专属点歌台</title>
     <style>
-        /* 保留原有所有样式，以下是新增+微调样式 */
+        /* 保留原有所有样式,以下是新增+微调样式 */
         * {
             margin: 0;
             padding: 0;
@@ -1134,7 +1134,7 @@
 {"name":"独家记忆","singer":"陈小春","category":"四字歌"},
 {"name":"断了的弦","singer":"周杰伦","category":"四字歌"},
 {"name":"对你告白","singer":"李梦尹","category":"四字歌"},
-{"name":"二泉映月","singer":"阿炳（华彦钧，instrumental）","category":"四字歌"},
+{"name":"二泉映月","singer":"阿炳（华彦钧,instrumental）","category":"四字歌"},
 {"name":"泛泛之辈","singer":"吴克群","category":"四字歌"},
 {"name":"方圆几里","singer":"薛之谦","category":"四字歌"},
 {"name":"飞蛾扑火","singer":"王键","category":"四字歌"},
@@ -1733,7 +1733,7 @@
 {"name":"最后一首情歌","singer":"苏琛","category":"六字歌"},
 {"name":"最简单的美好","singer":"郭聪明","category":"六字歌"},
 {"name":"最想说的秘密","singer":"孙子涵","category":"六字歌"},
-{"name":"最重要的小事","singer":"五月天","category":"六字歌"}，
+{"name":"最重要的小事","singer":"五月天","category":"六字歌"},
 {"name":"阿尔茨海默的爱","singer":"黑屋乐队","category":"七字歌"},
 {"name":"爱江山更爱美人","singer":"李丽芬","category":"七字歌"},
 {"name":"爱你不是两三天","singer":"梁静茹","category":"七字歌"},
@@ -1780,7 +1780,7 @@
 {"name":"漂洋过海来看你","singer":"金智娟（娃娃）","category":"七字歌"},
 {"name":"让我欢喜让我忧","singer":"周华健","category":"七字歌"},
 {"name":"让我留在你身边","singer":"陈奕迅","category":"七字歌"},
-{"name":"如果我变成回忆","singer":"Tank（吕建忠）","category":"七字歌"}，
+{"name":"如果我变成回忆","singer":"Tank（吕建忠）","category":"七字歌"},
 {"name":"如果这都不算爱","singer":"张学友","category":"七字歌"},
 {"name":"如果这就是爱情","singer":"张靓颖","category":"七字歌"},
 {"name":"少年英雄小哪吒","singer":"杨采钰","category":"七字歌"},
@@ -1821,7 +1821,7 @@
 {"name":"走着走着就散了","singer":"庄心妍","category":"七字歌"},
 {"name":"最熟悉的陌生人","singer":"萧亚轩","category":"七字歌"},
 {"name":"最想念的人是你","singer":"陈楚生","category":"七字歌"},
-{"name":"做我老婆好不好","singer":"徐誉滕","category":"七字歌"}，
+{"name":"做我老婆好不好","singer":"徐誉滕","category":"七字歌"},
 {"name":"给我一个理由忘记","singer":"A-Lin(黄丽玲)","category":"八字歌"},
 {"name":"给我一首歌的时间","singer":"周杰伦","category":"八字歌"},
 {"name":"根本你不懂得爱我","singer":"韦雄","category":"八字歌"},
@@ -1858,7 +1858,7 @@
 {"name":"一千零一次我爱你","singer":"李浩然","category":"八字歌"},
 {"name":"有多少爱可以重来","singer":"黄仲昆","category":"八字歌"},
 {"name":"有一种遗憾叫我们","singer":"陆虎","category":"八字歌"},
-{"name":"在加纳共和国离婚","singer":"菲道尔、Dior大颖","category":"八字歌"}，
+{"name":"在加纳共和国离婚","singer":"菲道尔、Dior大颖","category":"八字歌"},
 {"name":"爱上一个不回家的人","singer":"林忆莲","category":"九字歌"},
 {"name":"爱我的人和我爱的人","singer":"裘海正","category":"九字歌"},
 {"name":"爱我只是你开的玩笑","singer":"东来东往","category":"九字歌"},
@@ -1879,7 +1879,7 @@
 {"name":"原来你什么都不想要","singer":"张惠妹","category":"九字歌"},
 {"name":"在那桃花盛开的地方","singer":"蒋大为","category":"九字歌"},
 {"name":"在那天回不去的路上","singer":"陈硕子","category":"九字歌"},
-{"name":"这一生关于你的风景","singer":"枯木逢春","category":"九字歌"}，
+{"name":"这一生关于你的风景","singer":"枯木逢春","category":"九字歌"},
 {"name":"不让我的眼泪陪我过夜","singer":"齐秦","category":"十字以上歌"},
 {"name":"你怎么连话都说不清楚","singer":"蔡依林","category":"十字以上歌"},
 {"name":"为什么你背着我爱别人","singer":"许志安","category":"十字以上歌"},
@@ -1896,9 +1896,9 @@
         ];
 
         // ============= 新增：分页核心全局变量 =============
-        let currentPage = 1; // 当前页码，默认第1页
-        const pageSize = 20; // 每页显示20条，可自行修改（比如改10/30）
-        let filteredSongs = [...allSongs]; // 存储筛选后的歌曲，默认是全部歌曲
+        let currentPage = 1; // 当前页码,默认第1页
+        const pageSize = 20; // 每页显示20条,可自行修改（比如改10/30）
+        let filteredSongs = [...allSongs]; // 存储筛选后的歌曲,默认是全部歌曲
 
         // ========== 2. 核心工具函数 ==========
         // 获取所有分类（去重）
@@ -1917,10 +1917,10 @@
         function getCurrentPageSongs() {
             const startIndex = (currentPage - 1) * pageSize; // 起始索引
             const endIndex = startIndex + pageSize; // 结束索引
-            return filteredSongs.slice(startIndex, endIndex); // 截取数组，返回当前页数据
+            return filteredSongs.slice(startIndex, endIndex); // 截取数组,返回当前页数据
         }
 
-        // 改造：渲染歌曲列表（适配分页，渲染当前页数据）
+        // 改造：渲染歌曲列表（适配分页,渲染当前页数据）
         function renderSongList() {
             const songListEl = document.getElementById('songList');
             songListEl.innerHTML = ''; // 清空原有内容
@@ -1945,7 +1945,7 @@
             });
         }
 
-        // 新增：渲染分页按钮（自动生成页码，处理禁用/激活）
+        // 新增：渲染分页按钮（自动生成页码,处理禁用/激活）
         function renderPagination() {
             const paginationEl = document.getElementById('pagination');
             paginationEl.innerHTML = ''; // 清空原有分页
@@ -2057,7 +2057,7 @@
             });
         }
 
-        // 改造：筛选歌曲（搜索+分类，筛选后重置分页为第1页）
+        // 改造：筛选歌曲（搜索+分类,筛选后重置分页为第1页）
         function filterSongs() {
             const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
             const selectedCategory = document.getElementById('categorySelect').value;
@@ -2088,6 +2088,7 @@
     </script>
 </body>
 </html>
+
 
 
 

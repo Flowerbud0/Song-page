@@ -2,130 +2,544 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 适配手机端，别人用手机打开也正常 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>简易点歌台 - 歌曲列表</title>
+    <title>爱吃GaGa专属点歌台</title>
     <style>
-        /* 全局样式：极简美观，适配各种屏幕 */
+        /* 全局样式重置与基础设置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
+            font-family: "Microsoft YaHei", "Heiti SC", sans-serif;
         }
         body {
-            max-width: 700px;
-            margin: 30px auto;
-            padding: 0 20px;
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        h1 {
+
+        /* 容器样式：居中+卡片效果 */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            padding: 30px;
+            position: relative;
+        }
+
+        /* 标题样式 */
+        .page-title {
             text-align: center;
-            color: #333;
-            margin-bottom: 25px;
+            color: #2c3e50;
             font-size: 28px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            letter-spacing: 2px;
         }
-        /* 搜索框样式：圆角+阴影，输入体验更好 */
-        #searchInput {
-            width: 100%;
-            padding: 12px 18px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            outline: none;
-            margin-bottom: 20px;
+
+        /* 功能区：搜索+分类+盲盒 布局 */
+        .function-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: center;
         }
-        #searchInput::placeholder {
-            color: #999;
+        @media (max-width: 768px) {
+            .function-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
-        /* 歌曲列表样式：分隔线+间距，清晰不拥挤 */
-        #songList {
-            list-style: none;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            padding: 10px 0;
-        }
-        .song-item {
+
+        /* 搜索框样式 */
+        .search-input {
+            flex: 1;
+            min-width: 250px;
             padding: 12px 20px;
-            border-bottom: 1px solid #eee;
-            color: #333;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
-        /* 最后一个歌曲项去掉分隔线 */
-        .song-item:last-child {
-            border-bottom: none;
+        .search-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
         }
-        /* 无搜索结果时的提示 */
+        .search-input::placeholder {
+            color: #aab7c4;
+        }
+
+        /* 分类下拉框样式 */
+        .category-select {
+            padding: 12px 20px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #2c3e50;
+            background: #fff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .category-select:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        /* 盲盒按钮样式 */
+        .blind-box-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ff6b8b 0%, #ff4757 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .blind-box-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+        }
+        .blind-box-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 歌曲列表样式 */
+        .song-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 768px) {
+            .song-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 歌曲卡片样式 */
+        .song-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px;
+            border-left: 4px solid #4a90e2;
+            transition: all 0.3s ease;
+        }
+        .song-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            background: #fff;
+        }
+        .song-name {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .song-info {
+            display: flex;
+            justify-content: space-between;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .song-singer {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .song-category {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* 无结果提示样式 */
         .no-result {
             text-align: center;
-            padding: 30px;
-            color: #999;
-            font-size: 16px;
+            padding: 60px 20px;
+            color: #6c757d;
+            font-size: 18px;
+            background: #f8f9fa;
+            border-radius: 12px;
         }
+
+        /* 盲盒弹窗样式 */
+        .blind-box-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .blind-box-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .blind-box-modal.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-title {
+            color: #ff4757;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .modal-song {
+            margin: 25px 0;
+        }
+        .modal-song-name {
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .modal-song-singer {
+            font-size: 18px;
+            color: #6c757d;
+        }
+        .close-modal-btn {
+            padding: 10px 24px;
+            background: #2c3e50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        .close-modal-btn:hover {
+            background: #34495e;
+        }
+
+        /* 分类标签颜色：不同分类不同颜色 */
+        .category-流行 { border-left-color: #4a90e2; }
+        .category-经典 { border-left-color: #9b59b6; }
+        .category-摇滚 { border-left-color: #e74c3c; }
+        .category-民谣 { border-left-color: #2ecc71; }
+        .category-国风 { border-left-color: #f39c12; }
+        .category-R&B { border-left-color: #1abc9c; }
+        .category-电子 { border-left-color: #3498db; }
+        .category-其他 { border-left-color: #95a5a6; }
     </style>
 </head>
 <body>
-    <h1>简易点歌台</h1>
-    <!-- 搜索框：提示搜索歌曲/歌手 -->
-    <input type="text" id="searchInput" placeholder="搜索歌曲名/歌手名...">
-    <!-- 歌曲列表容器 -->
-    <ul id="songList"></ul>
+    <div class="container">
+        <h1 class="page-title">爱吃GaGa专属点歌台</h1>
+
+        <!-- 功能区：搜索+分类+盲盒 -->
+        <div class="function-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索歌曲名/歌手名...">
+            <select class="category-select" id="categorySelect">
+                <option value="all">全部分类</option>
+                <!-- 分类选项会通过JS自动生成 -->
+            </select>
+            <button class="blind-box-btn" id="blindBoxBtn">
+                🎁 抽歌曲盲盒
+            </button>
+        </div>
+
+        <!-- 歌曲列表容器 -->
+        <ul class="song-list" id="songList"></ul>
+
+        <!-- 盲盒弹窗 -->
+        <div class="blind-box-modal" id="blindBoxModal">
+            <div class="modal-content">
+                <h2 class="modal-title">恭喜抽到！</h2>
+                <div class="modal-song" id="modalSong">
+                    <div class="modal-song-name">歌曲名</div>
+                    <div class="modal-song-singer">歌手名</div>
+                </div>
+                <button class="close-modal-btn" id="closeModalBtn">关闭</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // ========== 【唯一需要你修改的地方：替换成自己的歌曲列表】 ==========
-        // 格式要求："歌曲名 - 歌手名"，每行一个，最后一个不用加逗号
+        // ========== 1. Excel歌单数据（已从你的Excel中提取，直接使用） ==========
         const allSongs = [
-            "七里香 - 周杰伦",
-            "晴天 - 周杰伦",
-            "江南 - 林俊杰",
-            "小幸运 - 田馥甄",
-            "平凡之路 - 朴树",
-            "后来 - 刘若英",
-            "遇见 - 孙燕姿",
-            "稻香 - 周杰伦",
-            "演员 - 薛之谦",
-            "花海 - 周杰伦",
-            "小酒窝 - 林俊杰/蔡卓妍",
-            "盛夏的果实 - 莫文蔚"
+            {"name":"七里香","singer":"周杰伦","category":"流行"},
+            {"name":"晴天","singer":"周杰伦","category":"流行"},
+            {"name":"江南","singer":"林俊杰","category":"流行"},
+            {"name":"小幸运","singer":"田馥甄","category":"流行"},
+            {"name":"平凡之路","singer":"朴树","category":"民谣"},
+            {"name":"后来","singer":"刘若英","category":"经典"},
+            {"name":"遇见","singer":"孙燕姿","category":"流行"},
+            {"name":"稻香","singer":"周杰伦","category":"流行"},
+            {"name":"演员","singer":"薛之谦","category":"流行"},
+            {"name":"花海","singer":"周杰伦","category":"流行"},
+            {"name":"小酒窝","singer":"林俊杰/蔡卓妍","category":"流行"},
+            {"name":"盛夏的果实","singer":"莫文蔚","category":"经典"},
+            {"name":"孤勇者","singer":"陈奕迅","category":"流行"},
+            {"name":"如愿","singer":"王菲","category":"流行"},
+            {"name":"起风了","singer":"买辣椒也用券","category":"流行"},
+            {"name":"海阔天空","singer":"Beyond","category":"摇滚"},
+            {"name":"光辉岁月","singer":"Beyond","category":"摇滚"},
+            {"name":"真的爱你","singer":"Beyond","category":"摇滚"},
+            {"name":"蓝莲花","singer":"许巍","category":"摇滚"},
+            {"name":"曾经的你","singer":"许巍","category":"摇滚"},
+            {"name":"成都","singer":"赵雷","category":"民谣"},
+            {"name":"南方姑娘","singer":"赵雷","category":"民谣"},
+            {"name":"安和桥","singer":"宋冬野","category":"民谣"},
+            {"name":"董小姐","singer":"宋冬野","category":"民谣"},
+            {"name":"红玫瑰","singer":"陈奕迅","category":"流行"},
+            {"name":"白玫瑰","singer":"陈奕迅","category":"流行"},
+            {"name":"十年","singer":"陈奕迅","category":"经典"},
+            {"name":"浮夸","singer":"陈奕迅","category":"流行"},
+            {"name":"因为爱情","singer":"陈奕迅/王菲","category":"流行"},
+            {"name":"匆匆那年","singer":"王菲","category":"流行"},
+            {"name":"红豆","singer":"王菲","category":"经典"},
+            {"name":"暧昧","singer":"杨丞琳","category":"流行"},
+            {"name":"小幸运","singer":"田馥甄","category":"流行"},
+            {"name":"魔鬼中的天使","singer":"田馥甄","category":"流行"},
+            {"name":"可惜没如果","singer":"林俊杰","category":"流行"},
+            {"name":"不为谁而作的歌","singer":"林俊杰","category":"流行"},
+            {"name":"修炼爱情","singer":"林俊杰","category":"流行"},
+            {"name":"背对背拥抱","singer":"林俊杰","category":"流行"},
+            {"name":"曹操","singer":"林俊杰","category":"流行"},
+            {"name":"醉赤壁","singer":"林俊杰","category":"国风"},
+            {"name":"发如雪","singer":"周杰伦","category":"国风"},
+            {"name":"青花瓷","singer":"周杰伦","category":"国风"},
+            {"name":"东风破","singer":"周杰伦","category":"国风"},
+            {"name":"千里之外","singer":"周杰伦/费玉清","category":"国风"},
+            {"name":"双节棍","singer":"周杰伦","category":"流行"},
+            {"name":"龙拳","singer":"周杰伦","category":"流行"},
+            {"name":"本草纲目","singer":"周杰伦","category":"流行"},
+            {"name":"夜曲","singer":"周杰伦","category":"流行"},
+            {"name":"黑色毛衣","singer":"周杰伦","category":"流行"},
+            {"name":"夜的第七章","singer":"周杰伦","category":"流行"},
+            {"name":"以父之名","singer":"周杰伦","category":"流行"},
+            {"name":"阳光宅男","singer":"周杰伦","category":"流行"},
+            {"name":"星晴","singer":"周杰伦","category":"流行"},
+            {"name":"简单爱","singer":"周杰伦","category":"流行"},
+            {"name":"可爱女人","singer":"周杰伦","category":"流行"},
+            {"name":"爱在西元前","singer":"周杰伦","category":"流行"},
+            {"name":"威廉古堡","singer":"周杰伦","category":"流行"},
+            {"name":"七里香","singer":"周杰伦","category":"流行"},
+            {"name":"园游会","singer":"周杰伦","category":"流行"},
+            {"name":"晴天","singer":"周杰伦","category":"流行"},
+            {"name":"雨天","singer":"孙燕姿","category":"流行"},
+            {"name":"逆光","singer":"孙燕姿","category":"流行"},
+            {"name":"克卜勒","singer":"孙燕姿","category":"流行"},
+            {"name":"我怀念的","singer":"孙燕姿","category":"流行"},
+            {"name":"开始懂了","singer":"孙燕姿","category":"经典"},
+            {"name":"绿光","singer":"孙燕姿","category":"流行"},
+            {"name":"神奇","singer":"孙燕姿","category":"流行"},
+            {"name":"第一天","singer":"孙燕姿/阿信/陈建宁","category":"流行"},
+            {"name":"温柔","singer":"五月天","category":"摇滚"},
+            {"name":"倔强","singer":"五月天","category":"摇滚"},
+            {"name":"知足","singer":"五月天","category":"流行"},
+            {"name":"突然好想你","singer":"五月天","category":"流行"},
+            {"name":"恋爱ing","singer":"五月天","category":"流行"},
+            {"name":"私奔到月球","singer":"五月天/陈绮贞","category":"流行"},
+            {"name":"你不是真正的快乐","singer":"五月天","category":"流行"},
+            {"name":"我不愿让你一个人","singer":"五月天","category":"流行"},
+            {"name":"后来的我们","singer":"五月天","category":"流行"},
+            {"name":"如果我们不曾相遇","singer":"五月天","category":"流行"},
+            {"name":"干杯","singer":"五月天","category":"流行"},
+            {"name":"OAOA","singer":"五月天","category":"摇滚"},
+            {"name":"离开地球表面","singer":"五月天","category":"摇滚"},
+            {"name":"伤心的人别听慢歌","singer":"五月天","category":"流行"},
+            {"name":"王妃","singer":"萧敬腾","category":"摇滚"},
+            {"name":"王妃","singer":"萧敬腾","category":"摇滚"},
+            {"name":"新不了情","singer":"萧敬腾","category":"经典"},
+            {"name":"王子的新衣","singer":"萧敬腾","category":"摇滚"},
+            {"name":"你是我心内的一首歌","singer":"王力宏/Selina","category":"流行"},
+            {"name":"大城小爱","singer":"王力宏","category":"流行"},
+            {"name":"改变自己","singer":"王力宏","category":"流行"},
+            {"name":"唯一","singer":"王力宏","category":"经典"},
+            {"name":"心跳","singer":"王力宏","category":"流行"},
+            {"name":"需要人陪","singer":"王力宏","category":"流行"},
+            {"name":"龙的传人","singer":"王力宏","category":"流行"},
+            {"name":"花田错","singer":"王力宏","category":"国风"},
+            {"name":"盖世英雄","singer":"王力宏","category":"流行"},
+            {"name":"我们的爱","singer":"飞儿乐团","category":"摇滚"},
+            {"name":"Lydia","singer":"飞儿乐团","category":"摇滚"},
+            {"name":"千年之恋","singer":"飞儿乐团","category":"摇滚"},
+            {"name":"月牙湾","singer":"飞儿乐团","category":"国风"},
+            {"name":"偏爱","singer":"张芸京","category":"流行"},
+            {"name":"此生不换","singer":"青鸟飞鱼","category":"国风"},
+            {"name":"忘记时间","singer":"胡歌","category":"国风"},
+            {"name":"六月的雨","singer":"胡歌","category":"流行"},
+            {"name":"逍遥叹","singer":"胡歌","category":"国风"},
+            {"name":"一直很安静","singer":"阿桑","category":"流行"},
+            {"name":"寂寞在唱歌","singer":"阿桑","category":"流行"},
+            {"name":"叶子","singer":"阿桑","category":"流行"},
+            {"name":"受了点伤","singer":"阿桑","category":"流行"},
+            {"name":"勇气","singer":"梁静茹","category":"经典"},
+            {"name":"可惜不是你","singer":"梁静茹","category":"流行"},
+            {"name":"会呼吸的痛","singer":"梁静茹","category":"流行"},
+            {"name":"宁夏","singer":"梁静茹","category":"流行"},
+            {"name":"暖暖","singer":"梁静茹","category":"流行"},
+            {"name":"分手快乐","singer":"梁静茹","category":"流行"},
+            {"name":"我不难过","singer":"孙燕姿","category":"流行"},
+            {"name":"眼泪成诗","singer":"孙燕姿","category":"流行"},
+            {"name":"隐形的翅膀","singer":"张韶涵","category":"流行"},
+            {"name":"遗失的美好","singer":"张韶涵","category":"流行"},
+            {"name":"欧若拉","singer":"张韶涵","category":"流行"},
+            {"name":"香水百合","singer":"张韶涵","category":"流行"},
+            {"name":"亲爱的那不是爱情","singer":"张韶涵/吴克群","category":"流行"},
+            {"name":"小情歌","singer":"苏打绿","category":"流行"},
+            {"name":"我好想你","singer":"苏打绿","category":"流行"},
+            {"name":"无与伦比的美丽","singer":"苏打绿","category":"流行"},
+            {"name":"频率","singer":"苏打绿","category":"流行"},
+            {"name":"他夏了夏天","singer":"苏打绿","category":"流行"},
+            {"name":"突然好想你","singer":"五月天","category":"流行"},
+            {"name":"你不是真正的快乐","singer":"五月天","category":"流行"},
+            {"name":"我不愿让你一个人","singer":"五月天","category":"流行"},
+            {"name":"后来的我们","singer":"五月天","category":"流行"},
+            {"name":"如果我们不曾相遇","singer":"五月天","category":"流行"},
+            {"name":"干杯","singer":"五月天","category":"流行"},
+            {"name":"OAOA","singer":"五月天","category":"摇滚"},
+            {"name":"离开地球表面","singer":"五月天","category":"摇滚"},
+            {"name":"伤心的人别听慢歌","singer":"五月天","category":"流行"}
         ];
 
+        // ========== 2. 核心功能实现 ==========
         // 获取页面元素
         const searchInput = document.getElementById('searchInput');
+        const categorySelect = document.getElementById('categorySelect');
         const songList = document.getElementById('songList');
+        const blindBoxBtn = document.getElementById('blindBoxBtn');
+        const blindBoxModal = document.getElementById('blindBoxModal');
+        const modalSong = document.getElementById('modalSong');
+        const closeModalBtn = document.getElementById('closeModalBtn');
 
-        // 渲染歌曲列表（核心函数：根据筛选后的列表展示）
-        function renderSongs(songs) {
-            // 清空原有列表
+        // 2.1 生成分类选项（自动提取所有分类，去重）
+        function generateCategoryOptions() {
+            // 提取所有分类并去重
+            const categories = [...new Set(allSongs.map(song => song.category))];
+            // 生成选项
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        // 2.2 渲染歌曲列表（支持搜索+分类筛选）
+        function renderSongs(filteredSongs) {
+            // 清空列表
             songList.innerHTML = '';
-            // 判断是否有歌曲
-            if (songs.length === 0) {
-                songList.innerHTML = '<li class="no-result">暂无匹配的歌曲</li>';
+
+            // 无结果提示
+            if (filteredSongs.length === 0) {
+                songList.innerHTML = `<li class="no-result">暂无匹配的歌曲哦~</li>`;
                 return;
             }
-            // 循环生成歌曲项
-            songs.forEach(song => {
+
+            // 渲染歌曲卡片
+            filteredSongs.forEach(song => {
                 const li = document.createElement('li');
-                li.className = 'song-item';
-                li.textContent = song;
+                li.className = `song-card category-${song.category}`;
+                li.innerHTML = `
+                    <div class="song-name">${song.name}</div>
+                    <div class="song-info">
+                        <div class="song-singer">👤 ${song.singer}</div>
+                        <div class="song-category">${song.category}</div>
+                    </div>
+                `;
                 songList.appendChild(li);
             });
         }
 
-        // 初始渲染：打开网页就展示所有歌曲
-        renderSongs(allSongs);
+        // 2.3 筛选歌曲（整合搜索+分类）
+        function filterSongs() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedCategory = categorySelect.value;
 
-        // 搜索功能：输入内容实时筛选（不区分大小写）
-        searchInput.addEventListener('input', function() {
-            // 获取搜索关键词，转小写（实现不区分大小写搜索）
-            const keyword = this.value.trim().toLowerCase();
-            // 筛选歌曲：包含关键词就保留
-            const filteredSongs = allSongs.filter(song => 
-                song.toLowerCase().includes(keyword)
-            );
-            // 渲染筛选后的列表
-            renderSongs(filteredSongs);
+            // 先按分类筛选，再按关键词筛选
+            let filtered = allSongs;
+            if (selectedCategory !== 'all') {
+                filtered = filtered.filter(song => song.category === selectedCategory);
+            }
+            if (keyword) {
+                filtered = filtered.filter(song => 
+                    song.name.toLowerCase().includes(keyword) || 
+                    song.singer.toLowerCase().includes(keyword)
+                );
+            }
+
+            renderSongs(filtered);
+            return filtered; // 返回筛选后的列表（用于盲盒功能）
+        }
+
+        // 2.4 盲盒功能（随机抽取歌曲）
+        function openBlindBox() {
+            const filteredSongs = filterSongs(); // 获取当前筛选后的歌曲
+            if (filteredSongs.length === 0) {
+                alert('当前没有可抽取的歌曲，换个筛选条件试试吧~');
+                return;
+            }
+            // 随机选一首
+            const randomIndex = Math.floor(Math.random() * filteredSongs.length);
+            const randomSong = filteredSongs[randomIndex];
+            // 填充弹窗内容
+            modalSong.innerHTML = `
+                <div class="modal-song-name">${randomSong.name}</div>
+                <div class="modal-song-singer">${randomSong.singer}</div>
+                <div style="margin-top:10px; color:#999; font-size:14px;">分类：${randomSong.category}</div>
+            `;
+            // 显示弹窗
+            blindBoxModal.classList.add('active');
+        }
+
+        // ========== 3. 事件绑定 ==========
+        // 页面加载时初始化
+        window.addEventListener('load', () => {
+            generateCategoryOptions(); // 生成分类选项
+            renderSongs(allSongs); // 初始渲染所有歌曲
+        });
+
+        // 搜索框输入事件
+        searchInput.addEventListener('input', filterSongs);
+
+        // 分类下拉框变化事件
+        categorySelect.addEventListener('change', filterSongs);
+
+        // 盲盒按钮点击事件
+        blindBoxBtn.addEventListener('click', openBlindBox);
+
+        // 关闭弹窗按钮点击事件
+        closeModalBtn.addEventListener('click', () => {
+            blindBoxModal.classList.remove('active');
+        });
+
+        // 点击弹窗外部关闭弹窗
+        blindBoxModal.addEventListener('click', (e) => {
+            if (e.target === blindBoxModal) {
+                blindBoxModal.classList.remove('active');
+            }
         });
     </script>
 </body>

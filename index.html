@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 适配手机端，别人用手机打开也正常 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简易点歌台 - 歌曲列表</title>
+    <style>
+        /* 全局样式：极简美观，适配各种屏幕 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 0 20px;
+            background-color: #f8f9fa;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+        /* 搜索框样式：圆角+阴影，输入体验更好 */
+        #searchInput {
+            width: 100%;
+            padding: 12px 18px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            outline: none;
+            margin-bottom: 20px;
+        }
+        #searchInput::placeholder {
+            color: #999;
+        }
+        /* 歌曲列表样式：分隔线+间距，清晰不拥挤 */
+        #songList {
+            list-style: none;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 10px 0;
+        }
+        .song-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            font-size: 16px;
+        }
+        /* 最后一个歌曲项去掉分隔线 */
+        .song-item:last-child {
+            border-bottom: none;
+        }
+        /* 无搜索结果时的提示 */
+        .no-result {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>简易点歌台</h1>
+    <!-- 搜索框：提示搜索歌曲/歌手 -->
+    <input type="text" id="searchInput" placeholder="搜索歌曲名/歌手名...">
+    <!-- 歌曲列表容器 -->
+    <ul id="songList"></ul>
+
+    <script>
+        // ========== 【唯一需要你修改的地方：替换成自己的歌曲列表】 ==========
+        // 格式要求："歌曲名 - 歌手名"，每行一个，最后一个不用加逗号
+        const allSongs = [
+            "七里香 - 周杰伦",
+            "晴天 - 周杰伦",
+            "江南 - 林俊杰",
+            "小幸运 - 田馥甄",
+            "平凡之路 - 朴树",
+            "后来 - 刘若英",
+            "遇见 - 孙燕姿",
+            "稻香 - 周杰伦",
+            "演员 - 薛之谦",
+            "花海 - 周杰伦",
+            "小酒窝 - 林俊杰/蔡卓妍",
+            "盛夏的果实 - 莫文蔚"
+        ];
+
+        // 获取页面元素
+        const searchInput = document.getElementById('searchInput');
+        const songList = document.getElementById('songList');
+
+        // 渲染歌曲列表（核心函数：根据筛选后的列表展示）
+        function renderSongs(songs) {
+            // 清空原有列表
+            songList.innerHTML = '';
+            // 判断是否有歌曲
+            if (songs.length === 0) {
+                songList.innerHTML = '<li class="no-result">暂无匹配的歌曲</li>';
+                return;
+            }
+            // 循环生成歌曲项
+            songs.forEach(song => {
+                const li = document.createElement('li');
+                li.className = 'song-item';
+                li.textContent = song;
+                songList.appendChild(li);
+            });
+        }
+
+        // 初始渲染：打开网页就展示所有歌曲
+        renderSongs(allSongs);
+
+        // 搜索功能：输入内容实时筛选（不区分大小写）
+        searchInput.addEventListener('input', function() {
+            // 获取搜索关键词，转小写（实现不区分大小写搜索）
+            const keyword = this.value.trim().toLowerCase();
+            // 筛选歌曲：包含关键词就保留
+            const filteredSongs = allSongs.filter(song => 
+                song.toLowerCase().includes(keyword)
+            );
+            // 渲染筛选后的列表
+            renderSongs(filteredSongs);
+        });
+    </script>
+</body>
+</html>

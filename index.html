@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>阿笑的专属点歌台</title>
     <style>
-        /* 保留你原来的所有样式，这里省略（和你原代码一致即可） */
-        /* 全局样式重置与基础设置 */
+        /* 保留原有所有样式，以下是新增+微调样式 */
         * {
             margin: 0;
             padding: 0;
@@ -18,8 +17,6 @@
             min-height: 100vh;
             padding: 20px;
         }
-
-        /* 容器样式：居中+卡片效果 */
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -29,8 +26,6 @@
             padding: 30px;
             position: relative;
         }
-
-        /* 标题样式 */
         .page-title {
             text-align: center;
             color: #2c3e50;
@@ -39,8 +34,6 @@
             font-weight: 700;
             letter-spacing: 2px;
         }
-
-        /* 功能区：搜索+分类+盲盒 布局 */
         .function-bar {
             display: flex;
             flex-wrap: wrap;
@@ -54,8 +47,6 @@
                 align-items: stretch;
             }
         }
-
-        /* 搜索框样式 */
         .search-input {
             flex: 1;
             min-width: 250px;
@@ -73,8 +64,6 @@
         .search-input::placeholder {
             color: #aab7c4;
         }
-
-        /* 分类下拉框样式 */
         .category-select {
             padding: 12px 20px;
             border: 2px solid #e0e6ed;
@@ -90,8 +79,6 @@
             border-color: #4a90e2;
             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
         }
-
-        /* 盲盒按钮样式 */
         .blind-box-btn {
             padding: 12px 24px;
             background: linear-gradient(135deg, #ff6b8b 0%, #ff4757 100%);
@@ -113,8 +100,6 @@
         .blind-box-btn:active {
             transform: translateY(0);
         }
-
-        /* 歌曲列表样式 */
         .song-list {
             list-style: none;
             display: grid;
@@ -127,8 +112,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
-        /* 歌曲卡片样式 */
         .song-card {
             background: #f8f9fa;
             border-radius: 12px;
@@ -164,8 +147,6 @@
             border-radius: 4px;
             font-size: 12px;
         }
-
-        /* 无结果提示样式 */
         .no-result {
             text-align: center;
             padding: 60px 20px;
@@ -174,8 +155,6 @@
             background: #f8f9fa;
             border-radius: 12px;
         }
-
-        /* 盲盒弹窗样式 */
         .blind-box-modal {
             position: fixed;
             top: 0;
@@ -241,8 +220,6 @@
         .close-modal-btn:hover {
             background: #34495e;
         }
-
-        /* 分类标签颜色：不同分类不同颜色 */
         .category-飘站歌 { border-left-color: #4a90e2; }
         .category-古风歌 { border-left-color: #9b59b6; }
         .category-粤语歌 { border-left-color: #e74c3c; }
@@ -258,6 +235,40 @@
         .category-八字歌 { border-left-color: #b0bec5; }
         .category-九字歌 { border-left-color: #8b4513; }
         .category-十字以上歌 { border-left-color: #f5f0e1; }
+
+        /* ============= 新增：分页样式 ============= */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            background: #fff;
+            color: #2c3e50;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .pagination-btn:hover:not(:disabled) {
+            border-color: #4a90e2;
+            color: #4a90e2;
+        }
+        .pagination-btn:disabled {
+            color: #aab7c4;
+            cursor: not-allowed;
+            background: #f8f9fa;
+        }
+        .pagination-btn.active {
+            background: #4a90e2;
+            color: #fff;
+            border-color: #4a90e2;
+        }
     </style>
 </head>
 <body>
@@ -279,6 +290,9 @@
         <!-- 歌曲列表容器 -->
         <ul class="song-list" id="songList"></ul>
 
+        <!-- ============= 新增：分页容器 ============= -->
+        <div class="pagination" id="pagination"></div>
+
         <!-- 盲盒弹窗 -->
         <div class="blind-box-modal" id="blindBoxModal">
             <div class="modal-content">
@@ -293,7 +307,7 @@
     </div>
 
     <script>
-        // ========== 1. 修正后的歌曲数据（修复语法错误） ==========
+        // ========== 1. 歌曲数据（已修复语法错误） ==========
         const allSongs = [
             {"name":"蝶","singer":"谭维维","category":"飘站歌"},
             {"name":"魂","singer":"信（苏见信）","category":"飘站歌"},
@@ -308,7 +322,7 @@
             {"name":"山海","singer":"草东没有派对","category":"飘站歌"},
             {"name":"无辜","singer":"曹格","category":"飘站歌"},
             {"name":"悟空","singer":"戴荃","category":"飘站歌"},
-            {"name":"Simon","singer":"丁世光","category":"飘站歌"}, // 修复引号错误
+            {"name":"Simon","singer":"丁世光","category":"飘站歌"},
             {"name":"High 歌","singer":"黄龄","category":"飘站歌"},
             {"name":"不重逢","singer":"华晨宇","category":"飘站歌"},
             {"name":"好春光","singer":"吴彤","category":"飘站歌"},
@@ -350,7 +364,7 @@
             {"name":"你的一生我只借一晚","singer":"曹格","category":"飘站歌"},
             {"name":"输了你赢了世界又如何","singer":"林志炫","category":"飘站歌"},
             {"name":"囍","singer":"葛东琪","category":"古风歌"},
-            {"name":"不染","singer":"毛不易","category":"古风歌"}, // 修复逗号缺失
+            {"name":"不染","singer":"毛不易","category":"古风歌"},
             {"name":"丰碑","singer":"小柯、董贞","category":"古风歌"},
             {"name":"皈依","singer":"皈依小能手","category":"古风歌"},
             {"name":"剑魂","singer":"李炜","category":"古风歌"},
@@ -1409,7 +1423,7 @@
 {"name":"最后一页","singer":"江语晨","category":"四字歌"},
 {"name":"最美婚礼","singer":"白小白","category":"四字歌"},
 {"name":"最美情侣","singer":"白小白","category":"四字歌"},
-            {"name":"P.S.我爱你","singer":"A-Lin（黄丽玲）","category":"五字歌"},
+{"name":"P.S.我爱你","singer":"A-Lin（黄丽玲）","category":"五字歌"},
 {"name":"爱的就是你","singer":"王力宏","category":"五字歌"},
 {"name":"爱的主打歌","singer":"萧亚轩","category":"五字歌"},
 {"name":"爱就一个字","singer":"张信哲","category":"五字歌"},
@@ -1878,8 +1892,13 @@
 {"name":"乖乖啊今天的你也辛苦了","singer":"Y-D","category":"十字以上歌"},
 {"name":"多想在平庸的生活拥抱你","singer":"隔壁老樊","category":"十字以上歌"},
 {"name":"有没有一首歌会让你想起我","singer":"周华健","category":"十字以上歌"},
-{"name":"总有一天你会出现在我身边","singer":"棱镜","category":"十字以上歌"},
+{"name":"总有一天你会出现在我身边","singer":"棱镜","category":"十字以上歌"}
         ];
+
+        // ============= 新增：分页核心全局变量 =============
+        let currentPage = 1; // 当前页码，默认第1页
+        const pageSize = 20; // 每页显示20条，可自行修改（比如改10/30）
+        let filteredSongs = [...allSongs]; // 存储筛选后的歌曲，默认是全部歌曲
 
         // ========== 2. 核心工具函数 ==========
         // 获取所有分类（去重）
@@ -1889,17 +1908,30 @@
             return Array.from(categories);
         }
 
-        // 渲染歌曲列表（支持筛选）
-        function renderSongList(filteredSongs) {
+        // 新增：计算总页数
+        function getTotalPages() {
+            return Math.ceil(filteredSongs.length / pageSize);
+        }
+
+        // 新增：获取当前页需要渲染的歌曲
+        function getCurrentPageSongs() {
+            const startIndex = (currentPage - 1) * pageSize; // 起始索引
+            const endIndex = startIndex + pageSize; // 结束索引
+            return filteredSongs.slice(startIndex, endIndex); // 截取数组，返回当前页数据
+        }
+
+        // 改造：渲染歌曲列表（适配分页，渲染当前页数据）
+        function renderSongList() {
             const songListEl = document.getElementById('songList');
             songListEl.innerHTML = ''; // 清空原有内容
+            const displaySongs = getCurrentPageSongs(); // 获取当前页歌曲
 
-            if (filteredSongs.length === 0) {
+            if (displaySongs.length === 0) {
                 songListEl.innerHTML = '<div class="no-result">暂无匹配的歌曲~</div>';
                 return;
             }
 
-            filteredSongs.forEach(song => {
+            displaySongs.forEach(song => {
                 const li = document.createElement('li');
                 li.className = `song-card category-${song.category}`;
                 li.innerHTML = `
@@ -1911,6 +1943,61 @@
                 `;
                 songListEl.appendChild(li);
             });
+        }
+
+        // 新增：渲染分页按钮（自动生成页码，处理禁用/激活）
+        function renderPagination() {
+            const paginationEl = document.getElementById('pagination');
+            paginationEl.innerHTML = ''; // 清空原有分页
+            const totalPages = getTotalPages();
+
+            // 无数据时隐藏分页
+            if (totalPages <= 1) {
+                paginationEl.style.display = 'none';
+                return;
+            }
+            paginationEl.style.display = 'flex';
+
+            // 上一页按钮
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.textContent = '上一页';
+            prevBtn.disabled = currentPage === 1; // 第1页禁用
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderSongList();
+                    renderPagination();
+                }
+            });
+            paginationEl.appendChild(prevBtn);
+
+            // 数字页码按钮（生成所有页码）
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderSongList();
+                    renderPagination();
+                });
+                paginationEl.appendChild(pageBtn);
+            }
+
+            // 下一页按钮
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.textContent = '下一页';
+            nextBtn.disabled = currentPage === totalPages; // 最后一页禁用
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderSongList();
+                    renderPagination();
+                }
+            });
+            paginationEl.appendChild(nextBtn);
         }
 
         // 初始化分类下拉框
@@ -1970,27 +2057,29 @@
             });
         }
 
-        // 筛选歌曲（搜索+分类）
+        // 改造：筛选歌曲（搜索+分类，筛选后重置分页为第1页）
         function filterSongs() {
             const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
             const selectedCategory = document.getElementById('categorySelect').value;
 
-            const filtered = allSongs.filter(song => {
-                // 分类筛选
+            // 重新筛选歌曲
+            filteredSongs = allSongs.filter(song => {
                 const matchCategory = selectedCategory === 'all' || song.category === selectedCategory;
-                // 搜索筛选（歌曲名/歌手名）
                 const matchSearch = song.name.toLowerCase().includes(searchKeyword) || 
                                     song.singer.toLowerCase().includes(searchKeyword);
                 return matchCategory && matchSearch;
             });
 
-            renderSongList(filtered);
+            currentPage = 1; // 关键：筛选后重置为第1页
+            renderSongList(); // 渲染筛选后当前页（第1页）
+            renderPagination(); // 重新渲染分页
         }
 
         // ========== 4. 初始化页面 ==========
         function init() {
             initCategorySelect(); // 初始化分类下拉框
-            renderSongList(allSongs); // 渲染全部歌曲
+            renderSongList(); // 渲染第1页歌曲
+            renderPagination(); // 初始化渲染分页
             bindEvents(); // 绑定所有事件
         }
 
@@ -1999,5 +2088,3 @@
     </script>
 </body>
 </html>
-
-
